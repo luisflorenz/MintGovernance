@@ -8,7 +8,7 @@ describe("MyGovernor", function () {
     const [owner, otherAccount] = await ethers.getSigners();
 
     const transactionCount = await owner.getTransactionCount();
-  
+
     // gets the address of the token before it is deployed
     const futureAddress = ethers.utils.getContractAddress({
       from: owner.address,
@@ -50,26 +50,26 @@ describe("MyGovernor", function () {
 
       // wait for the 1 block voting delay
       await hre.network.provider.send("evm_mine");
-      
+
       return { ...deployValues, proposalId } 
     }
-    
+
     it("should set the initial state of the proposal", async () => {
       const { governor, proposalId } = await loadFixture(afterProposingFixture);
-      
+
       const state = await governor.state(proposalId);
       assert.equal(state, 0);
     });
-    
+
     describe("after voting", () => {
       async function afterVotingFixture() {
         const proposingValues = await afterProposingFixture();
         const { governor, proposalId } = proposingValues;
-        
+
         const tx = await governor.castVote(proposalId, 1);      
         const receipt = await tx.wait();
         const voteCastEvent = receipt.events.find(x => x.event === 'VoteCast');
-        
+
         // wait for the 1 block voting period
         await hre.network.provider.send("evm_mine");
 
